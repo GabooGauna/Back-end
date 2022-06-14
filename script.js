@@ -19,12 +19,12 @@ class User{
     }
 
     countPets(){
-        console.log(this.pets.lenght);
+        console.log(this.pets.length);
     }
 
     getBookNames(){
         const bookNames = this.books.map( book => {
-            return book.name
+            return book.title
         } )
         console.log(bookNames);
     }
