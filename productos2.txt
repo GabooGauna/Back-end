@@ -1,0 +1,9 @@
+
+         {"nombre":"Gin", 
+         "precio":3500,
+         "url":"/gin.jpg", 
+         "id":1},
+         {"nombre":"Cerveza", 
+         "precio":500,
+         "url":"/cerveza.jpg", 
+         "id":2},
