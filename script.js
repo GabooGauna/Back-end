@@ -1,75 +1,83 @@
-const fs = require("fs");
+var fs = require('fs');
 
-const archivo = "productos.txt";
-
-
-class Contenedor {
-    
-    constructor( nombre, precio, url,id) {
-            this.nombre = nombre,
-            this.precio = precio,
-            this.url = url,
-            this.id = id
-    }
-    
-  
-    /*Metodos*/
-    async save() {
-        
-
-         try {
-            await fs.promises.appendFile("./productos2.txt", `
-         {"nombre":"${this.nombre}", 
-         "precio":${this.precio},
-         "url":"${this.url}", 
-         "id":${this.id}},`) 
-            console.log(`Producto Guardado, ID N° ${this.id}`)
-         } catch (error) {
-            console.log(error)
-         }
-
-
-        
-
+class Contenedor{
+    constructor(file){
+        this.file = file;
     }
 
-
-    async getById(num) {
-        try {
-            
-            if(num == this.id){
-                const item = {nombre: this.nombre, 
-                precio:this.precio,
-                url:this.url, 
-                id:this.id}
-                return console.log("resultado de GetById:", item)
-            }else {
-                return console.log(null)
-            }
-        } catch (error) {
-            return console.log(error)
-            
-        }
-    }
-    
     async getAll(){
-        try {
-            const contenido = await fs.promises.readFile("./productos2.txt", "utf-8" )
-            const items= [contenido]
-            console.log(items)
-        } catch (error) {
-            return console.log(error)
+        try{
+            const archivoG = await fs.promises.readFile(this.file, 'utf-8');
+            return JSON.parse(archivoG);
+        }catch(err){
+            return [ ];
         }
-
     }
 
+    async save(objeto){
+        const objetos = await this.getAll();
+        let newId;
+        if(objetos.length == 0){
+            newId = 1
+        }else{
+            newId = objetos[objetos.length - 1].id + 1;
+        }
+        const newObject = {...objeto, id:newId};
+        objetos.push(newObject);
+        try{
+            await fs.promises.writeFile(this.file, JSON.stringify(objetos, null, 2))
+            return newId;
+        }catch(err){
+            console.log(`error al guardar: ${err}`)
+        }
+    }
+
+    async deleteAll(){
+        await fs.promises.writeFile(this.file, JSON.stringify([], null, 2))
+    }
+
+    async getById(num){
+        try{
+            const data = await this.getAll()
+            const archivoId = data.find((item)=>{
+                if(num == item.id){
+                    return item
+                }else{
+                    console.log('no se encontro el item con el id mencionado')
+                }
+            })
+            return archivoId;
+        }
+        catch(err){
+            console.log(err)
+        }
+    }
+
+    async deleteById(num){
+        try{
+            const data = await this.getAll();
+            const archivoFiltrados = data.filter((item)=>{
+                if(num != item.id){
+                    return item;
+                }else{
+                    console.log('no se encontro el item con el id mencionado')
+                }
+            })
+            const nuevoArchivo = await fs.promises.writeFile(this.file, JSON.stringify(archivoFiltrados, null, 2));
+            return nuevoArchivo;
+        }
+        catch(err){
+            console.log(err)
+        }
+    }
 
 }
 
-let producto1 = new Contenedor ("Gin", 3500, "/gin.jpg",1);
-let producto2 = new Contenedor ("Cerveza", 500, "/cerveza.jpg",2);
-let producto3 = new Contenedor ("Vino", 2500, "/vino.jpg",3);
-producto1.save()
-producto2.save()
-producto3.getById(3)
-producto3.getAll()
+const arch = new Contenedor('productos.txt');
+/*arch.save({
+    "title": "Globo Terrá",
+    "price": 345.67,
+    "thumbnail": "https://cdn3.iconfinder.com/data/icons/education-209/64/globe-earth-geograhy-planet-school-256.png",
+  })*/
+
+  arch.deleteAll();
