@@ -74,10 +74,17 @@ class Contenedor{
 }
 
 const arch = new Contenedor('productos.txt');
-/*arch.save({
+  arch.save({
     "title": "Globo Terrá",
     "price": 345.67,
     "thumbnail": "https://cdn3.iconfinder.com/data/icons/education-209/64/globe-earth-geograhy-planet-school-256.png",
-  })*/
+  })
 
-  arch.deleteAll();
+const libreta = new Contenedor('productos.txt');
+  libreta.save({
+    "title": "Libreta",
+    "price": 320.50,
+    "thumbnail": "https://cdn3.iconfinder.com/data/icons/education-209/64/globe-earth-geograhy-planet-school-256.png",
+})
+  
+module.exports = Contenedor;
